@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+
 import {
   Image,
   View,
@@ -7,6 +8,17 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+
+import * as AuthSession from "expo-auth-session";
+
+
+import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+import { auth } from "../firebase";
+
+WebBrowser.maybeCompleteAuthSession();
+
 
 export default function AuthForm({
   title,
@@ -17,7 +29,28 @@ export default function AuthForm({
   setPassword,
   onSubmit,
   buttonText,
+  
 }) {
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+  clientId: "154899709314-144fnevglkps1821mrqgp0bl0o1pb60e.apps.googleusercontent.com",
+  redirectUri,
+});
+
+  const redirectUri = AuthSession.makeRedirectUri({
+  useProxy: true,
+});
+
+   useEffect(() => {
+  if (response?.type === "success") {
+    console.log("Google login success!");
+    console.log(response);
+  }
+}, [response]);
+
+
+
+
   return (
     <View style={styles.screen}>
       <Image
@@ -61,9 +94,14 @@ export default function AuthForm({
         <Text style={styles.or}>or</Text>
 
         {/* Social login */}
-        <TouchableOpacity style={styles.googleButton}>
-          <Text style={styles.socialText}>Login with Google</Text>
-        </TouchableOpacity>
+        <TouchableOpacity
+  style={styles.googleButton}
+  onPress={() => promptAsync({ useProxy: true })}
+
+>
+  <Text style={styles.socialText}>Login with Google</Text>
+</TouchableOpacity>
+
 
         <TouchableOpacity style={styles.appleButton}>
           <Text style={styles.appleText}>Login with Apple</Text>
@@ -72,6 +110,7 @@ export default function AuthForm({
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   screen: {

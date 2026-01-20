@@ -8,12 +8,15 @@ import SignupStep4 from "./SignupStep4";
 export default function SignupFlow() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState({
-    email: "",
-    age: "",
-    interests: [],
-    nickname: "",
-    skills: "",
-  });
+  email: "",
+  age: "",
+  jlpt: "",
+  gender: "",
+  country: "",
+  interests: [],
+  nickname: "",
+  skills: "",
+});
 
   return (
     <View style={styles.screen}>
